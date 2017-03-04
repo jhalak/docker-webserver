@@ -1,0 +1,84 @@
+version: '2'
+services:
+### Nginx proxy container that will handle multiple applicaiton request ###
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  laravel:
+    image: laraedit/laraedit
+    container_name: laravel
+    volumes:
+      - /opt/projects/laravel5:/var/www/html/app
+    environment:
+      - VIRTUAL_HOST=laravel-local.com
+
+  drupal:
+    image: drupal
+    container_name: drupal
+    volumes:
+      - /opt/projects/drupal/app:/var/www/html/app
+    environment:
+      - VIRTUAL_HOST=drupal-local.com
+
+### Databases Data Container ####
+  data:
+    build: ./data
+    container_name: data
+    volumes:
+      - /var/lib/mysql
+      - /var/lib/postgres
+      - /var/lib/mariadb
+      - /var/lib/redis
+      - /var/lib/memcached
+      - /var/lib/neo4j/data
+
+### MySQL Container ###
+  mysql:
+    build: ./mysql
+    container_name: mysql
+    volumes_from:
+      - data
+    ports:
+      - "3306:3306"
+    environment:
+        MYSQL_DATABASE: dashboard
+        MYSQL_USER: docker
+        MYSQL_PASSWORD: secret
+        MYSQL_ROOT_PASSWORD: root
+
+### Beanstalkd Container ###
+  beanstalkd:
+    build: ./beanstalkd
+    container_name: beanstalkd
+    ports:
+      - "11300:11300"
+    privileged: true
+    links:
+      - laravel
+
+### Beanstalkd Console Container ###
+  beanstalkd-console:
+    build: ./beanstalkd-console
+    container_name: beanstalkd-console
+    ports:
+      - "2080:2080"
+    links:
+      - beanstalkd
+
+### PostgreSQL Container ###
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    volumes_from:
+      - data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: docker
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: secret
