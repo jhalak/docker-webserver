@@ -9,6 +9,8 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
+############## Custom applications : Start ##########################
+
   laravel:
     image: laraedit/laraedit
     container_name: laravel
@@ -24,6 +26,9 @@ services:
       - /opt/projects/drupal/app:/var/www/html/app
     environment:
       - VIRTUAL_HOST=drupal-local.com
+
+
+############## Custom applications : End ##########################
 
 ### Databases Data Container ####
   data:
