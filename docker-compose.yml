@@ -8,6 +8,9 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+        docker-static:
+            ipv4_address: 10.11.222.1
 
 ############## Custom applications : Start ##########################
 
@@ -15,18 +18,55 @@ services:
     image: laraedit/laraedit
     container_name: laravel
     volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
       - /opt/projects/laravel5:/var/www/html/app
     environment:
       - VIRTUAL_HOST=laravel-local.com
 
-  drupal:
-    image: drupal
-    container_name: drupal
+  sso:
+    image: laraedit/laraedit
+    container_name: sso
     volumes:
-      - /opt/projects/drupal/app:/var/www/html/app
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/sso:/var/www/html/app
+      - /Volumes/Workspace/scripts:/opt/scripts
     environment:
-      - VIRTUAL_HOST=drupal-local.com
+      - VIRTUAL_HOST=sso.local.com
+    extra_hosts:
+      - "sso.local.com:10.11.111.1"
+      - "survey.local.com:10.11.10.4"
+    networks:
+        docker-static:
+            ipv4_address: 10.11.111.1
 
+  api:
+    image: laraedit/laraedit
+    container_name: api
+    volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/api:/var/www/html/app
+      - /Volumes/Workspace/scripts:/opt/scripts
+    environment:
+      - VIRTUAL_HOST=api.local.com
+    networks:
+        docker-static:
+            ipv4_address: 10.11.10.3
+
+  survey:
+    image: laraedit/laraedit
+    container_name: survey
+    volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/survey:/var/www/html/app
+      - /Volumes/Workspace/scripts:/opt/scripts
+    environment:
+      - VIRTUAL_HOST=survey.local.com
+    extra_hosts:
+      - "sso.local.com:10.11.111.1"
+      - "survey.local.com:10.11.10.4"
+    networks:
+        docker-static:
+            ipv4_address: 10.11.10.4
 
 ############## Custom applications : End ##########################
 
@@ -35,12 +75,12 @@ services:
     build: ./data
     container_name: data
     volumes:
-      - /var/lib/mysql
-      - /var/lib/postgres
-      - /var/lib/mariadb
-      - /var/lib/redis
-      - /var/lib/memcached
-      - /var/lib/neo4j/data
+      - /opt/data/mysql:/var/lib/mysql
+      - /opt/data/postgres:/var/lib/postgres
+      - /opt/data/mariadb:/var/lib/mariadb
+      - /opt/data/redis:/var/lib/redis
+      - /opt/data/memcached:/var/lib/memcached
+      - /opt/data/neo4j:/var/lib/neo4j/data
 
 ### MySQL Container ###
   mysql:
@@ -55,6 +95,9 @@ services:
         MYSQL_USER: docker
         MYSQL_PASSWORD: secret
         MYSQL_ROOT_PASSWORD: root
+    networks:
+        docker-static:
+            ipv4_address: 10.11.100.1
 
 ### Beanstalkd Container ###
   beanstalkd:
@@ -87,3 +130,10 @@ services:
       POSTGRES_DB: docker
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: secret
+
+networks:
+    docker-static:
+        ipam:
+            config:
+                - subnet: 10.11.0.0/16
+                  ip_range: 10.11.5.0/24
