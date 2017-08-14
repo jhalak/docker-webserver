@@ -13,7 +13,8 @@ up and running with a less amount of time.
 * Remove the sections that are not necessary.
 * Provide the IP address of a container in `ipv4_address` attribute of `networks`.
 * Save the file
-* Go to cloned directory via shell and run `docker-compose up -d`
+* Go to cloned directory via shell and run: `docker-compose up -d nginx-proxy`
+* Then start your required app. e.g. `docker-compose up -d sso laravel api mysql`
 * Add the urls in your `/etc/hosts` file that are defined in `VIRTUAL_HOST` directives.
 * Browse the urls in your browser.
 
