@@ -1,0 +1,130 @@
+version: '2'
+services:
+### Nginx proxy container that will handle multiple applicaiton request ###
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+        docker-static:
+            ipv4_address: 10.11.222.1
+
+############## Custom applications : Start ##########################
+  sso:
+    image: laraedit/laraedit
+    container_name: sso
+    volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/sso:/var/www/html/app
+      - /Volumes/Workspace/ws_scripts:/opt/scripts
+    environment:
+      - VIRTUAL_HOST=sso-local.com
+    extra_hosts:
+      - "laravel54-local.com:10.11.10.1"
+      - "sso-local.com:10.11.111.1"
+    networks:
+        docker-static:
+            ipv4_address: 10.11.111.1
+
+  laravel54:
+    image: laraedit/laraedit
+    container_name: laravel54
+    volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/laravel54:/var/www/html/app
+      - /Volumes/Workspace/ws_scripts:/opt/scripts
+    environment:
+      - VIRTUAL_HOST=laravel54-local.com
+    extra_hosts:
+      - "laravel54-local.com:10.11.10.1"
+      - "sso-local.com:10.11.111.1"
+      - "api-local.com:10.11.10.2"
+    networks:
+        docker-static:
+            ipv4_address: 10.11.10.1
+
+  api:
+    image: laraedit/laraedit
+    container_name: api
+    volumes:
+      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - /Volumes/Workspace/api:/var/www/html/app
+      - /Volumes/Workspace/ws_scripts:/opt/scripts
+    environment:
+      - VIRTUAL_HOST=api-local.com
+    networks:
+        docker-static:
+            ipv4_address: 10.11.10.2
+
+############## Custom applications : End ##########################
+
+### Databases Data Container ####
+  data:
+    build: ./data
+    container_name: data
+    volumes:
+      - /opt/data/mysql:/var/lib/mysql
+      - /opt/data/postgres:/var/lib/postgres
+      - /opt/data/mariadb:/var/lib/mariadb
+      - /opt/data/redis:/var/lib/redis
+      - /opt/data/memcached:/var/lib/memcached
+      - /opt/data/neo4j:/var/lib/neo4j/data
+
+### MySQL Container ###
+  mysql:
+    build: ./mysql
+    container_name: mysql
+    volumes_from:
+      - data
+    ports:
+      - "3306:3306"
+    environment:
+        MYSQL_DATABASE: dashboard
+        MYSQL_USER: docker
+        MYSQL_PASSWORD: secret
+        MYSQL_ROOT_PASSWORD: root
+    networks:
+        docker-static:
+            ipv4_address: 10.11.100.1
+
+### Beanstalkd Container ###
+  beanstalkd:
+    build: ./beanstalkd
+    container_name: beanstalkd
+    ports:
+      - "11300:11300"
+    privileged: true
+    links:
+      - laravel
+
+### Beanstalkd Console Container ###
+  beanstalkd-console:
+    build: ./beanstalkd-console
+    container_name: beanstalkd-console
+    ports:
+      - "2080:2080"
+    links:
+      - beanstalkd
+
+### PostgreSQL Container ###
+  postgres:
+    build: ./postgres
+    container_name: postgres
+    volumes_from:
+      - data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: docker
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: secret
+
+networks:
+    docker-static:
+        ipam:
+            config:
+                - subnet: 10.11.0.0/16
+                  ip_range: 10.11.5.0/24
