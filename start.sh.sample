@@ -1,0 +1,5 @@
+# Dont change the following line
+docker-compose up -d nginx-proxy mysql
+
+# Change the following line
+docker-compose up -d sso laravel54 api
