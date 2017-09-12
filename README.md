@@ -13,6 +13,14 @@ up and running with a less amount of time.
 * Add a new container info in 'Custom applications' section or modify the existing containers info
 * Remove the sections that are not necessary.
 * Provide the IP address of a container in `ipv4_address` attribute of `networks`.
+* Create a directory anywhere to store the data of your various databases. e.g. `/opt/data` and create 5 directories in that is described in `volumes` properties of `data` section. Then change the mapping so that the left side of `:` part matches all the directories. e.g.
+```
+- /path/to/your-data-directory/mysql:/var/lib/mysql
+- /path/to/your-data-directory/postgres:/var/lib/postgres
+- /path/to/your-data-directory/mariadb:/var/lib/mariadb
+- /path/to/your-data-directory/redis:/var/lib/redis
+- /path/to/your-data-directory/memcached:/var/lib/memcached
+```
 * Save the file
 * Copy `start.sh.sample` to `start.sh`. (`cp start.sh.sample start.sh`)
 * Open `start.sh` and change the 4th line so that it meets your custom application names.
@@ -23,7 +31,7 @@ up and running with a less amount of time.
 ### Inter application browsing (from one container to another)
 To reach one application from another application with named route,
 provide the named route and IP in the `extra_hosts` section.
-e.g. see `sso` and `survey` section.
+e.g. see `sso` and `laravel54` section.
 
 ### Mysql host
 From your host machine you can reach mysql at `127.0.0.1` as host.
