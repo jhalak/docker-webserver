@@ -97,8 +97,6 @@ services:
     ports:
       - "11300:11300"
     privileged: true
-    links:
-      - laravel
 
 ### Beanstalkd Console Container ###
   beanstalkd-console:
