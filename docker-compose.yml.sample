@@ -34,6 +34,7 @@ services:
     container_name: laravel54
     volumes:
       - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
+      - ./ssh-config:/root/.ssh/config
       - /Volumes/Workspace/laravel54:/var/www/html/app
       - /Volumes/Workspace/ws_scripts:/opt/scripts
     environment:
