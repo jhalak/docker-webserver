@@ -1,8 +1,8 @@
-# Docker Development Webserver
-Docker setup for creating multiple web application in single host machine with named host for faster development.
+# Docker Development Webserver for Laravel application
+Docker setup for creating multiple laravel application in single host machine with named host for faster development.
 
 In a fresh PC we need to install many things to run multiple PHP applications. To make the things easier,
-this repository consists of the most used docker images that are combined together to make multiple web applications
+this repository consists of the most used docker images that are combined together to make multiple laravel applications
 up and running with a less amount of time.
 
 ### Steps
