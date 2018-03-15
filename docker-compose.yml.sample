@@ -13,25 +13,10 @@ services:
             ipv4_address: 10.11.222.1
 
 ############## Custom applications : Start ##########################
-  sso:
-    image: laraedit/laraedit
-    container_name: sso
-    volumes:
-      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
-      - /Volumes/Workspace/sso:/var/www/html/app
-      - /Volumes/Workspace/ws_scripts:/opt/scripts
-    environment:
-      - VIRTUAL_HOST=sso-local.com
-    extra_hosts:
-      - "laravel54-local.com:10.11.10.1"
-      - "sso-local.com:10.11.111.1"
-    networks:
-        docker-static:
-            ipv4_address: 10.11.111.1
-
   laravel54:
     image: laraedit/laraedit
     container_name: laravel54
+    working_dir: /var/www/html/app
     volumes:
       - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
       - ./ssh-config:/root/.ssh/config
@@ -41,7 +26,6 @@ services:
       - VIRTUAL_HOST=laravel54-local.com
     extra_hosts:
       - "laravel54-local.com:10.11.10.1"
-      - "sso-local.com:10.11.111.1"
       - "api-local.com:10.11.10.2"
     networks:
         docker-static:
@@ -50,6 +34,7 @@ services:
   api:
     image: laraedit/laraedit
     container_name: api
+    working_dir: /var/www/html/app
     volumes:
       - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
       - /Volumes/Workspace/api:/var/www/html/app
