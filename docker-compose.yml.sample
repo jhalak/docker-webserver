@@ -1,114 +1,118 @@
 version: '2'
 services:
-### Nginx proxy container that will handle multiple applicaiton request ###
+### Nginx proxy container that will handle multiple application request ###
   nginx-proxy:
     image: jwilder/nginx-proxy
-    container_name: nginx-proxy
     ports:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
-        docker-static:
-            ipv4_address: 10.11.222.1
+      docker-webserver:
+          ipv4_address: 11.12.222.1
 
 ############## Custom applications : Start ##########################
-  laravel54:
-    image: laraedit/laraedit
-    container_name: laravel54
-    working_dir: /var/www/html/app
+  laravel56-apache:
+    build:
+      context: ./apache-php7-laravel
+    container_name: laravel56-apache
+    working_dir: /var/www/html
     volumes:
-      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
-      - ./ssh-config:/root/.ssh/config
-      - /Volumes/Workspace/laravel54:/var/www/html/app
-      - /Volumes/Workspace/ws_scripts:/opt/scripts
+      - /Volumes/Workspace/laravel56:/var/www/html
     environment:
-      - VIRTUAL_HOST=laravel54-local.com
+      - VIRTUAL_HOST=laravel56.local.com
     extra_hosts:
-      - "laravel54-local.com:10.11.10.1"
-      - "api-local.com:10.11.10.2"
+      - "legacy-php55-project.local.com:11.12.10.102"
     networks:
-        docker-static:
-            ipv4_address: 10.11.10.1
+        docker-webserver:
+            ipv4_address: 11.12.10.101
 
-  api:
-    image: laraedit/laraedit
-    container_name: api
-    working_dir: /var/www/html/app
-    volumes:
-      - ./php.ini:/etc/php/7.0/fpm/conf.d/php.ini
-      - /Volumes/Workspace/api:/var/www/html/app
-      - /Volumes/Workspace/ws_scripts:/opt/scripts
-    environment:
-      - VIRTUAL_HOST=api-local.com
-    networks:
-        docker-static:
-            ipv4_address: 10.11.10.2
+  legacy-php55-project:
+      build:
+        context: ./apache-php55-legacy
+      container_name: legacy-php55-project
+      working_dir: /var/www
+      volumes:
+        - /Volumes/Workspace/legacy-php55-project:/var/www
+        - /Volumes/Workspace/legacy-php55-project/dev.htaccess:/var/www/.htaccess
+      environment:
+        - VIRTUAL_HOST=legacy-php55-project.local.com
+      networks:
+          docker-webserver:
+              ipv4_address: 11.12.10.102
+
+  drupal8:
+      build:
+        context: ./apache-php7-drupal8
+      container_name: drupal8
+      working_dir: /var/www/html
+      volumes:
+        - /Volumes/Workspace/drupal8:/var/www/html
+      environment:
+        - VIRTUAL_HOST=drupal8.local.com
+      networks:
+          docker-webserver:
+              ipv4_address: 11.12.10.103
 
 ############## Custom applications : End ##########################
 
 ### Databases Data Container ####
   data:
     build: ./data
-    container_name: data
+    container_name: database_data
     volumes:
       - /opt/data/mysql:/var/lib/mysql
-      - /opt/data/postgres:/var/lib/postgres
-      - /opt/data/mariadb:/var/lib/mariadb
-      - /opt/data/redis:/var/lib/redis
       - /opt/data/memcached:/var/lib/memcached
-      - /opt/data/neo4j:/var/lib/neo4j/data
+      - /opt/data/postgres:/var/lib/postgres
 
-### MySQL Container ###
+  ### MySQL Container ###
   mysql:
     build: ./mysql
-    container_name: mysql
+    container_name: mysql_common
     volumes_from:
       - data
     ports:
       - "3306:3306"
     environment:
-        MYSQL_DATABASE: dashboard
         MYSQL_USER: docker
         MYSQL_PASSWORD: secret
         MYSQL_ROOT_PASSWORD: root
     networks:
-        docker-static:
-            ipv4_address: 10.11.100.1
+        docker-webserver:
+            ipv4_address: 11.12.100.1
 
-### Beanstalkd Container ###
+  ### Beanstalkd Container ###
   beanstalkd:
-    build: ./beanstalkd
-    container_name: beanstalkd
-    ports:
-      - "11300:11300"
-    privileged: true
+      build: ./beanstalkd
+      container_name: beanstalkd
+      ports:
+        - "11300:11300"
+      privileged: true
 
-### Beanstalkd Console Container ###
+  ### Beanstalkd Console Container ###
   beanstalkd-console:
-    build: ./beanstalkd-console
-    container_name: beanstalkd-console
-    ports:
-      - "2080:2080"
-    links:
-      - beanstalkd
+      build: ./beanstalkd-console
+      container_name: beanstalkd-console
+      ports:
+        - "2080:2080"
+      links:
+        - beanstalkd
 
-### PostgreSQL Container ###
+  ### PostgreSQL Container ###
   postgres:
-    build: ./postgres
-    container_name: postgres
-    volumes_from:
-      - data
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: docker
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: secret
+      build: ./postgres
+      container_name: postgres
+      volumes_from:
+        - data
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRES_DB: docker
+        POSTGRES_USER: docker
+        POSTGRES_PASSWORD: secret
 
 networks:
-    docker-static:
-        ipam:
-            config:
-                - subnet: 10.11.0.0/16
-                  ip_range: 10.11.5.0/24
+  docker-webserver:
+    ipam:
+      config:
+        - subnet: 11.12.0.0/16

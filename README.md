@@ -1,5 +1,5 @@
-# Docker Development Webserver for Laravel application
-Docker setup for creating multiple laravel application in single host machine with named host for faster development.
+# Docker Development Webserver for web application
+Docker setup for creating multiple application in single host machine with named host for faster development.
 
 In a fresh PC we need to install many things to run multiple PHP applications. To make the things easier,
 this repository consists of the most used docker images that are combined together to make multiple laravel applications
@@ -17,8 +17,6 @@ up and running with a less amount of time.
 ```
 - /path/to/your-data-directory/mysql:/var/lib/mysql
 - /path/to/your-data-directory/postgres:/var/lib/postgres
-- /path/to/your-data-directory/mariadb:/var/lib/mariadb
-- /path/to/your-data-directory/redis:/var/lib/redis
 - /path/to/your-data-directory/memcached:/var/lib/memcached
 ```
 * Save the file
@@ -31,11 +29,11 @@ up and running with a less amount of time.
 ### Inter application browsing (from one container to another)
 To reach one application from another application with named route,
 provide the named route and IP in the `extra_hosts` section.
-e.g. see `sso` and `laravel54` section.
+e.g. see `laravel56-apache` section.
 
 ### Mysql host
 From your host machine you can reach mysql at `127.0.0.1` as host.
 e.g. From host run `mysql -h 127.0.0.1 -u root -proot`
 
-From any docker container can reach mysql at `10.11.100.1` as host
-e.g.: From container run `mysql -h 10.11.100.1 -u root -proot`
+From any docker container can reach mysql at `11.12.100.1` as host
+e.g.: From container run `mysql -h 11.12.100.1 -u root -proot`
