@@ -37,3 +37,8 @@ e.g. From host run `mysql -h 127.0.0.1 -u root -proot`
 
 From any docker container can reach mysql at `11.12.100.1` as host
 e.g.: From container run `mysql -h 11.12.100.1 -u root -proot`
+
+
+
+**Note:**
+Laraedit version is available in *[laravel-laraedit](https://github.com/jhalak/docker-webserver/tree/laravel-laraedit)* branch.
