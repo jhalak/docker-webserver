@@ -31,5 +31,5 @@ ADD ssl-config.conf /etc/apache2/sites-enabled/default-ssl.conf
 ADD php.ini /etc/php5/apache2/php.ini
 
 # By default start up apache in the foreground, override with /bin/bash for interative.
-CMD /usr/sbin/apache2ctl -D FOREGROUND
 RUN service memcached start
+CMD /usr/sbin/apache2ctl -D FOREGROUND

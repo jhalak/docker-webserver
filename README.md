@@ -20,9 +20,9 @@ up and running with a less amount of time.
 - /path/to/your-data-directory/memcached:/var/lib/memcached
 ```
 * Save the file
-* Copy `start.sh.sample` to `start.sh`. (`cp start.sh.sample start.sh`)
-* Open `start.sh` and change the 4th line so that it meets your custom application names.
-* Go to the root of the cloned repo and run `./start.sh`.
+* Copy `start.sample` to `start`. (`cp start.sample start`)
+* Open `start` and change the 4th line so that it meets your custom application names.
+* Go to the root of the cloned repo and run `./start`.
 * Add the urls in your `/etc/hosts` file that are defined in `VIRTUAL_HOST` directives.
 * Browse the urls in your browser.
 

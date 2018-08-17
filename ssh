@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Please provide the container name"
+    exit;
+fi
+
+
+docker exec -it $1 bash

@@ -1,0 +1,12 @@
+if [ -z "$1" ]; then
+    echo "Please provide container name"
+    echo "example: $0 <container_name>"
+    echo "Available containers:"
+    docker-compose images
+    exit;
+fi
+
+docker-compose stop $1
+docker-compose rm $1
+docker-compose build $1
+docker-compose up -d $1

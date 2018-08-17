@@ -1,0 +1,5 @@
+# Don't change the following line
+docker-compose up -d nginx-proxy mysql
+
+# Change the following line
+docker-compose up -d gcal2excel_local villagefocus dhmp

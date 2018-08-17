@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+    docker-compose stop    
+    exit;
+fi
+
+docker-compose stop $1
