@@ -30,6 +30,7 @@ ENV PHP_TIMEZONE Asia/Dhaka
 
 # Configure Apache Document Root
 ENV APACHE_DOC_ROOT /var/www/html
+ENV APACHE_RUN_DIR /var/run/apache2
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite

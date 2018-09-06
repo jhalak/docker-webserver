@@ -13,4 +13,4 @@ echo "	Require all granted" >> /etc/apache2/conf-available/document-root.conf
 echo "</Directory>" >> /etc/apache2/conf-available/document-root.conf
 a2enconf "document-root.conf"
 
-exec apache2-foreground
+exec apache2 -DFOREGROUND
