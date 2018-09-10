@@ -11,8 +11,7 @@ RUN apt-get update -y \
     && docker-php-ext-enable redis memcached xdebug
 
 # Install zip
-RUN docker-php-ext-install mysqli pdo zip
-RUN docker-php-ext-enable mysqli pdo zip
+RUN docker-php-ext-install mysqli pdo zip pdo_mysql
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
