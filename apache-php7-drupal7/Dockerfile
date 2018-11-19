@@ -1,17 +1,17 @@
-FROM php:7.2-apache-stretch
+FROM php:7.1-apache-stretch
 
 MAINTAINER Onirudda Odikare Jhalak <jhalak1983@gmail.com>
 
 RUN apt-get update -y \
-    && apt-get install -y zlib1g-dev libpng-dev libpq-dev libmemcached-dev mysql-client vim git \
+    && apt-get install -y zlib1g-dev libpng-dev libmemcached-dev mysql-client vim git \
     && rm -rf /var/lib/apt/lists/* \
     && pecl install redis-4.0.1 \
     && pecl install memcached-3.0.4 \
-    && pecl install xdebug-2.6.0 \
-    && docker-php-ext-enable redis memcached xdebug
+    && pecl install xdebug-2.6.0
 
-# Install zip
-RUN docker-php-ext-install mysqli pdo zip pdo_mysql pdo_pgsql gd
+# Install extrnsions
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip gd opcache
+RUN docker-php-ext-enable redis memcached xdebug
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
