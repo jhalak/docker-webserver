@@ -3,7 +3,7 @@ FROM php:7.2-apache-stretch
 MAINTAINER Onirudda Odikare Jhalak <jhalak1983@gmail.com>
 
 RUN apt-get update -y \
-    && apt-get install -y zlib1g-dev libpng-dev libpq-dev libmemcached-dev mysql-client vim git \
+    && apt-get install -y zlib1g-dev libpng-dev libpq-dev libmcrypt-dev libmemcached-dev mysql-client vim git \
     && rm -rf /var/lib/apt/lists/* \
     && pecl install redis-4.0.1 \
     && pecl install memcached-3.0.4 \
@@ -11,7 +11,7 @@ RUN apt-get update -y \
     && docker-php-ext-enable redis memcached xdebug
 
 # Install zip
-RUN docker-php-ext-install mysqli pdo zip pdo_mysql pdo_pgsql gd
+RUN docker-php-ext-install mcrypt mysqli pdo zip pdo_mysql pdo_pgsql gd
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
