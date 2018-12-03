@@ -1,5 +1,13 @@
-# Don't change the following line
-docker-compose up -d nginx-proxy mysql
+#!/usr/bin/env bash
 
-# Change the following line
-docker-compose up -d laravel56-apache drupal8
+if [ -z "$1" ]; then
+    # Don't change the following line
+    docker-compose up -d nginx-proxy mysql
+
+    # Change the following line
+    docker-compose up -d laravel56-apache drupal8
+
+    exit;
+fi
+
+docker-compose up -d $1
