@@ -1,0 +1,8 @@
+#/bin/bash
+
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 [db_name]"
+    exit 1
+fi
+
+mysql -h 127.0.0.1 -u root -proot $1
