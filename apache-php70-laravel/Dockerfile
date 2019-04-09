@@ -3,7 +3,7 @@ FROM php:7.0-apache-stretch
 MAINTAINER Onirudda Odikare Jhalak <jhalak1983@gmail.com>
 
 RUN apt-get update -y \
-    && apt-get install -y zlib1g-dev libpng-dev libpq-dev libmcrypt-dev libmemcached-dev mysql-client vim git \
+    && apt-get install -y zlib1g-dev libpng-dev libpq-dev libmcrypt-dev libmemcached-dev mysql-client vim git wget \
     && rm -rf /var/lib/apt/lists/* \
     && pecl install redis-4.0.1 \
     && pecl install memcached-3.0.4 \
@@ -16,6 +16,10 @@ RUN docker-php-ext-install mysqli pdo mcrypt zip pdo_mysql pdo_pgsql gd
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
+
+# Install phpunit
+RUN wget https://phar.phpunit.de/phpunit-4.5.0.phar \
+    && mv phpunit-4.5.0.phar /usr/local/bin/phpunit
 
 # Manually set up the apache environment variables
 ENV APACHE_RUN_USER www-data
